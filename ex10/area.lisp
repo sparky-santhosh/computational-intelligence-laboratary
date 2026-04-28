@@ -1,0 +1,10 @@
+(defun area_square(n)
+(format t"Area of square : ~a" (* n n))
+(values))
+(defun pg2()
+(format t"Enter the side of square : ")
+(finish-output)
+(let ((n (read)))
+(area_square n))
+(values))
+
