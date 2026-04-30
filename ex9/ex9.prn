@@ -1,0 +1,406 @@
+Script started on Thu Apr 30 11:15:02 2026
+[?1034h[23bcs113@mepcolinux ex9]$cat card.py
+TOTAL = 52
+
+def show_result(name, favorable):
+    print(f"\n--- {name} Calculation ---")
+    print(f"Favorable outcomes = {favorable}")
+    print(f"Total outcomes = {TOTAL}")
+    print(f"Probability = {favorable}/{TOTAL}")
+    print(f"Decimal = {round(favorable / TOTAL, 4)}")
+    print("---------------------------")
+
+while True:
+    print("\n===== CARD PROBABILITY MENU =====")
+    print("1. Heart")
+    print("2. Face Card (J, Q, K)")
+    print("3. Ace")
+    print("4. Red Card")
+    print("5. Black Card")
+    print("6. Exit")
+
+    try:
+        choice = int(input("Enter choice: "))
+    except ValueError:
+        print("Please enter a valid number ")
+        continue
+
+    if choice == 1:
+        show_result("Heart", 13)
+
+    elif choice == 2:
+        print("\nFace Cards = 3 (J,Q,K) * 4 suits = 12")
+        show_result("Face Card", 12)
+
+    elif choice == 3:
+        show_result("Ace", 4)
+
+    elif choice == 4:
+        print("\nRed Cards = Hearts(13) + Diamonds(13) = 26")
+        show_result("Red Card", 26)
+
+    elif choice == 5:
+        print("\nBlack Cards = Spades(13) + Clubs(13) = 26")
+        show_result("Black Card", 26)
+
+    elif choice == 6:
+        print("Program Ended ")
+        break
+
+    else:
+        print("Invalid choice ")
+
+[23bcs113@mepcolinux ex9]$python3 card.py
+
+===== CARD PROBABILITY MENU =====
+1. Heart
+2. Face Card (J, Q, K)
+3. Ace
+4. Red Card
+5. Black Card
+6. Exit
+Enter choice: 1
+
+--- Heart Calculation ---
+Favorable outcomes = 13
+Total outcomes = 52
+Probability = 13/52
+Decimal = 0.25
+---------------------------
+
+===== CARD PROBABILITY MENU =====
+1. Heart
+2. Face Card (J, Q, K)
+3. Ace
+4. Red Card
+5. Black Card
+6. Exit
+Enter choice: 2
+
+Face Cards = 3 (J,Q,K) * 4 suits = 12
+
+--- Face Card Calculation ---
+Favorable outcomes = 12
+Total outcomes = 52
+Probability = 12/52
+Decimal = 0.2308
+---------------------------
+
+===== CARD PROBABILITY MENU =====
+1. Heart
+2. Face Card (J, Q, K)
+3. Ace
+4. Red Card
+5. Black Card
+6. Exit
+Enter choice: 3
+
+--- Ace Calculation ---
+Favorable outcomes = 4
+Total outcomes = 52
+Probability = 4/52
+Decimal = 0.0769
+---------------------------
+
+===== CARD PROBABILITY MENU =====
+1. Heart
+2. Face Card (J, Q, K)
+3. Ace
+4. Red Card
+5. Black Card
+6. Exit
+Enter choice: 4
+
+Red Cards = Hearts(13) + Diamonds(13) = 26
+
+--- Red Card Calculation ---
+Favorable outcomes = 26
+Total outcomes = 52
+Probability = 26/52
+Decimal = 0.5
+---------------------------
+
+===== CARD PROBABILITY MENU =====
+1. Heart
+2. Face Card (J, Q, K)
+3. Ace
+4. Red Card
+5. Black Card
+6. Exit
+Enter choice: 5
+
+Black Cards = Spades(13) + Clubs(13) = 26
+
+--- Black Card Calculation ---
+Favorable outcomes = 26
+Total outcomes = 52
+Probability = 26/52
+Decimal = 0.5
+---------------------------
+
+===== CARD PROBABILITY MENU =====
+1. Heart
+2. Face Card (J, Q, K)
+3. Ace
+4. Red Card
+5. Black Card
+6. Exit
+Enter choice: 6
+Program Ended 
+[23bcs113@mepcolinux ex9]$ls
+bay.py	card.py  data.txt  ex9.prn  fulljoint.py
+[23bcs113@mepcolinux ex9]$cat fulljoint.py
+default_table = {
+    ("b","e","a"): 0.01,
+    ("b","~e","a"): 0.08,
+    ("b","e","~a"): 0.001,
+    ("b","~e","~a"): 0.009,
+    ("~b","e","a"): 0.01,
+    ("~b","~e","a"): 0.09,
+    ("~b","e","~a"): 0.01,
+    ("~b","~e","~a"): 0.79
+}
+
+def get_table():
+    print("\nEnter values (press Enter to keep default):\n")
+    table = {}
+
+    for key in default_table:
+        b, e, a = key
+        inp = input(f"P({b},{e},{a}) = ")
+
+        if inp.strip() == "":
+            table[key] = default_table[key]
+        else:
+            table[key] = float(inp)
+
+    return table
+
+
+def print_table(table):
+    print("\n--- Current Joint Probability Table ---")
+    for (b,e,a), prob in table.items():
+        print(f"P({b},{e},{a}) = {prob}")
+    print("--------------------------------------\n")
+
+
+def joint_prob(table, conditions):
+    total = 0
+
+    print("\nCalculation:")
+    print(" + ".join([f"P({c})" for c in conditions]), "(conceptually)\n")
+
+    print("Matched rows:")
+    values = []
+
+    for (b,e,a), prob in table.items():
+        row = (b,e,a)
+
+        if all(x in row for x in conditions):
+            print(f"P{row} = {prob}")
+            values.append(prob)
+            total += prob
+
+    print("\nTotal calculation:")
+    print(" + ".join(map(str, values)), "=", total)
+
+    return total
+
+
+
+choice = input("Use default table? (y/n): ").lower()
+
+if choice == "y":
+    table = default_table
+else:
+    table = get_table()
+
+print_table(table)
+
+while True:
+    query = input("Enter query (P(a), P(a,b)) or 'exit': ").lower()
+
+    if query == "exit":
+        break
+
+    query = query.replace("p(","").replace(")","")
+    terms = [x.strip() for x in query.split(",")]
+
+    result = joint_prob(table, terms)
+
+    print("\nFinal Answer =", result)
+    print("\n==============================\n")
+[23bcs113@mepcolinux ex9]$python3 fulljoint.py
+Use default table? (y/n): y
+
+--- Current Joint Probability Table ---
+P(b,e,a) = 0.01
+P(b,~e,a) = 0.08
+P(b,e,~a) = 0.001
+P(b,~e,~a) = 0.009
+P(~b,e,a) = 0.01
+P(~b,~e,a) = 0.09
+P(~b,e,~a) = 0.01
+P(~b,~e,~a) = 0.79
+--------------------------------------
+
+Enter query (P(a), P(a,b)) or 'exit': p(a)
+
+Calculation:
+P(a) (conceptually)
+
+Matched rows:
+P('b', 'e', 'a') = 0.01
+P('b', '~e', 'a') = 0.08
+P('~b', 'e', 'a') = 0.01
+P('~b', '~e', 'a') = 0.09
+
+Total calculation:
+0.01 + 0.08 + 0.01 + 0.09 = 0.19
+
+Final Answer = 0.19
+
+==============================
+
+Enter query (P(a), P(a,b)) or 'exit': p(a,e,b)
+
+Calculation:
+P(a) + P(e) + P(b) (conceptually)
+
+Matched rows:
+P('b', 'e', 'a') = 0.01
+
+Total calculation:
+0.01 = 0.01
+
+Final Answer = 0.01
+
+==============================
+
+Enter query (P(a), P(a,b)) or 'exit': p(a,b)
+
+Calculation:
+P(a) + P(b) (conceptually)
+
+Matched rows:
+P('b', 'e', 'a') = 0.01
+P('b', '~e', 'a') = 0.08
+
+Total calculation:
+0.01 + 0.08 = 0.09
+
+Final Answer = 0.09
+
+==============================
+
+Enter query (P(a), P(a,b)) or 'exit': exit
+[23bcs113@mepcolinux ex9]$cat bay.py
+def read_data():
+    data = []
+    # Make sure data.txt exists in the same folder!
+    try:
+        with open("data.txt", "r") as f:
+            next(f)  # skip header
+            for line in f:
+                a, b, c = map(int, line.strip().split())
+                data.append((a, b, c))
+    except FileNotFoundError:
+        print("Error: data.txt not found!")
+        return []
+    return data
+
+
+def calculate_probabilities(data):
+    total = len(data)
+    if total == 0:
+        print("No data to process.")
+        return
+
+    count_A = sum(1 for a,b,c in data if a == 1)
+    count_B = sum(1 for a,b,c in data if b == 1)
+    count_C = sum(1 for a,b,c in data if c == 1)
+
+    count_AB = sum(1 for a,b,c in data if a == 1 and b == 1)
+
+    # Probabilities
+    P_A = count_A / total
+    P_B = count_B / total
+    P_C = count_C / total
+    P_AB = count_AB / total
+
+    P_B_given_A = count_AB / count_A if count_A != 0 else 0
+    P_A_given_B = count_AB / count_B if count_B != 0 else 0
+
+    print("\n--- Counts ---")
+    print(f"Total = {total}")
+    print(f"A=1 count = {count_A}")
+    print(f"B=1 count = {count_B}")
+    print(f"C=1 count = {count_C}")
+    print(f"A and B count = {count_AB}") # Fixed symbol here
+
+    print("\n--- Probabilities ---")
+
+    print("\n1. Joint Probability")
+    print("P(A and B) = count(A and B) / total") # Fixed symbol here
+    print(f"P(A and B) = {count_AB}/{total} = {P_AB}")
+
+    print("\n2. Marginal Probability")
+    print("P(A) = count(A) / total")
+    print(f"P(A) = {count_A}/{total} = {P_A}")
+
+    print("\n3. Conditional Probability")
+    print("P(A|B) = count(A and B) / count(B)") # Fixed symbol here
+    print(f"P(A|B) = {count_AB}/{count_B} = {P_A_given_B}")
+
+    print("\n4. Bayes Theorem")
+    print("P(A|B) = [P(B|A) * P(A)] / P(B)")
+    print(f"P(B|A) = {count_AB}/{count_A} = {P_B_given_A}")
+    print(f"P(A) = {P_A}")
+    print(f"P(B) = {P_B}")
+
+    if P_B != 0:
+        bayes = (P_B_given_A * P_A) / P_B
+        print(f"P(A|B) = ({P_B_given_A} * {P_A}) / {P_B}")
+        print(f"Result = {bayes}")
+    else:
+        print("Cannot divide by zero")
+
+
+# Run
+data = read_data()
+if data:
+    calculate_probabilities(data)
+[23bcs113@mepcolinux ex9]$python3 bay.py
+
+--- Counts ---
+Total = 8
+A=1 count = 4
+B=1 count = 4
+C=1 count = 4
+A and B count = 2
+
+--- Probabilities ---
+
+1. Joint Probability
+P(A and B) = count(A and B) / total
+P(A and B) = 2/8 = 0.25
+
+2. Marginal Probability
+P(A) = count(A) / total
+P(A) = 4/8 = 0.5
+
+3. Conditional Probability
+P(A|B) = count(A and B) / count(B)
+P(A|B) = 2/4 = 0.5
+
+4. Bayes Theorem
+P(A|B) = [P(B|A) * P(A)] / P(B)
+P(B|A) = 2/4 = 0.5
+P(A) = 0.5
+P(B) = 0.5
+P(A|B) = (0.5 * 0.5) / 0.5
+Result = 0.5
+[23bcs113@mepcolinux ex9]$exit
+exit
+
+Script done on Thu Apr 30 11:16:21 2026
